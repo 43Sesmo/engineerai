@@ -1,16 +1,16 @@
 """
 EngineerAI backend — application entrypoint.
 
-Task 8 added the first route: GET /api/health. Task 9 added the second:
-POST/GET /api/projects. Every other route belongs to later tasks (Tasks
-10-11). FastAPI's automatic /docs and /openapi.json exist by default;
-that's built-in framework behavior, not new scope added by any task.
+Task 8 added the first route: GET /api/health. Task 9 added POST/GET
+/api/projects. Task 10 added conversation create/get. Task 11 is next.
+FastAPI's automatic /docs and /openapi.json exist by default; that's
+built-in framework behavior, not new scope added by any task.
 """
 
 import uvicorn
 from fastapi import FastAPI
 
-from app.api import health, projects
+from app.api import conversations, health, projects
 from app.core.config import settings
 
 app = FastAPI(
@@ -25,6 +25,7 @@ app = FastAPI(
 
 app.include_router(health.router)
 app.include_router(projects.router)
+app.include_router(conversations.router)
 
 
 if __name__ == "__main__":
