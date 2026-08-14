@@ -1,0 +1,14 @@
+# Task 2 (revised — SQLite local development): database-layer dependencies.
+sqlmodel
+python-dotenv
+
+# Task 3 (backend core skeleton & configuration)
+fastapi
+uvicorn[standard]
+pydantic-settings
+
+# Task 6 (migrations)
+alembic
+
+# Task 7 (AI layer)
+anthropic
