@@ -7,7 +7,7 @@ for them to reference. Safe to run more than once — it checks for an
 existing user first rather than inserting a duplicate.
 
 Usage (from the backend/ directory):
-    python app/db/seed.py
+    python -m app.db.seed
 """
 
 from sqlmodel import Session, select
@@ -26,8 +26,6 @@ def seed_default_user() -> None:
             )
             return
 
-        # Placeholder name — a stand-in until real auth exists, not a
-        # personalization decision baked into the schema.
         user = User(name="Founder")
         session.add(user)
         session.commit()

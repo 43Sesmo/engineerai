@@ -7,6 +7,9 @@ variables directly — this keeps environment/config loading in exactly one
 place in the codebase.
 """
 
+from typing import Literal
+
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,13 +21,25 @@ class Settings(BaseSettings):
     # PostgreSQL once the approved long-term architecture is adopted.
     database_url: str
 
-    # Optional — unused until Task 7 (AI Layer: Claude Client Wrapper).
-    # Left blank by default rather than given a placeholder value that
-    # could be mistaken for a real key.
-    claude_api_key: str = ""
-
     # Optional — local dev server port, with a sensible default.
     server_port: int = 8000
+
+    # --- AI Provider Abstraction --------------------------------------
+    # Which provider send_prompt() uses. Config-only selection, no
+    # runtime/per-request switching.
+    ai_provider: Literal["anthropic", "openai"] = "anthropic"
+
+    # ANTHROPIC_API_KEY is checked first; CLAUDE_API_KEY (the old name)
+    # is still honored if that's what an existing .env already has, so
+    # nothing breaks for anyone who hasn't updated their .env yet.
+    anthropic_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("ANTHROPIC_API_KEY", "CLAUDE_API_KEY"),
+    )
+    anthropic_model: str = "claude-sonnet-5"
+
+    openai_api_key: str = ""
+    openai_model: str = "gpt-5.6-terra"
 
 
 settings = Settings()

@@ -23,8 +23,6 @@ from sqlmodel import SQLModel
 from app.core.config import settings
 
 # --- Naming convention: must be set BEFORE importing the models ----------
-# Setting this after the model classes are imported would be too late —
-# their tables/constraints are constructed at import time.
 NAMING_CONVENTION = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",

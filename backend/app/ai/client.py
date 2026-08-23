@@ -1,51 +1,33 @@
 """
-AI Layer — thin wrapper around the Claude API.
+AI Layer — provider-agnostic facade.
 
-Deliberately minimal: one function that sends a prompt and returns the raw
-text response. No prompt engineering, no structured-output parsing, no
-retrieval-augmentation — that's the Engineering Reasoning Layer's job in
-Sprint 2, not this module's. This wrapper's only responsibility is proving
-reliable, well-handled connectivity to Claude.
+Reads settings.ai_provider and delegates to the matching provider module.
+Callers only ever import from this module — never a provider module or
+either SDK directly — so switching providers is a one-line configuration
+change (AI_PROVIDER in .env), never a code change anywhere else in the app.
+
+Provider modules are imported lazily, inside each dispatch branch, not at
+the top of this file — so this module never requires both the `anthropic`
+and `openai` packages to be installed, only whichever one the configured
+provider actually needs.
 """
 
-import anthropic
-
+from app.ai.errors import AIProviderError
 from app.core.config import settings
 
-DEFAULT_MODEL = "claude-sonnet-5"
+__all__ = ["send_prompt", "AIProviderError"]
 
 
-class ClaudeClientError(Exception):
-    """Raised when a Claude API call fails, wrapping the underlying cause."""
+def send_prompt(prompt: str, model: str | None = None) -> str:
+    if settings.ai_provider == "anthropic":
+        from app.ai.providers import anthropic_provider
 
+        return anthropic_provider.send_prompt(prompt, model=model)
+    elif settings.ai_provider == "openai":
+        from app.ai.providers import openai_provider
 
-def send_prompt(prompt: str, model: str = DEFAULT_MODEL) -> str:
-    """
-    Send a single prompt to Claude and return its raw text response.
-
-    Raises ClaudeClientError — never a bare or swallowed exception — on any
-    failure: a missing API key, a timeout, or an API error. Callers get a
-    clear, actionable message rather than a silent failure or a raw SDK
-    traceback.
-    """
-    if not settings.claude_api_key:
-        raise ClaudeClientError(
-            "CLAUDE_API_KEY is not set. Copy backend/.env.example to "
-            "backend/.env and set CLAUDE_API_KEY before calling the AI layer."
+        return openai_provider.send_prompt(prompt, model=model)
+    else:
+        raise AIProviderError(
+            f"Unknown AI provider configured: {settings.ai_provider!r}"
         )
-
-    client = anthropic.Anthropic(api_key=settings.claude_api_key)
-
-    try:
-        response = client.messages.create(
-            model=model,
-            max_tokens=1024,
-            messages=[{"role": "user", "content": prompt}],
-        )
-    except anthropic.APITimeoutError as exc:
-        raise ClaudeClientError(f"Claude API request timed out: {exc}") from exc
-    except anthropic.APIError as exc:
-        raise ClaudeClientError(f"Claude API returned an error: {exc}") from exc
-
-    text_parts = [block.text for block in response.content if block.type == "text"]
-    return "".join(text_parts)

@@ -44,7 +44,4 @@ app.include_router(messages.router)
 
 
 if __name__ == "__main__":
-    # Convenience entrypoint for local development. The primary way to run
-    # this app is `uvicorn app.main:app --reload` from the backend/
-    # directory, which supports auto-reload; this path does not.
     uvicorn.run(app, host="0.0.0.0", port=settings.server_port)

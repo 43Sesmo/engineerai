@@ -12,3 +12,6 @@ alembic
 
 # Task 7 (AI layer)
 anthropic
+
+# AI Provider Abstraction
+openai

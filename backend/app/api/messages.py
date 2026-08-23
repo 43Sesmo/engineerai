@@ -18,7 +18,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, SQLModel, select
 
-from app.ai.client import ClaudeClientError, send_prompt
+from app.ai.client import AIProviderError, send_prompt
 from app.db.models import Conversation, Message
 from app.db.session import get_session
 
@@ -70,7 +70,7 @@ def create_message(
 
     try:
         reply_text = send_prompt(payload.content)
-    except ClaudeClientError as exc:
+    except AIProviderError as exc:
         raise HTTPException(
             status_code=502, detail=f"Claude API call failed: {exc}"
         ) from exc
