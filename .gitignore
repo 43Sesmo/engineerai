@@ -33,4 +33,9 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
-*.swo
+*.swo  
+# Scratch verification scripts
+*_SCRATCH.py
+
+# TypeScript build cache
+*.tsbuildinfo

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { apiClient, Project, Message } from "../lib/api-client";
+import EngineeringGuidanceView, { EngineeringGuidance } from "./EngineeringGuidanceView";
 
 interface ChatWindowProps {
   projectId: number;
@@ -112,7 +113,14 @@ export default function ChatWindow({ projectId }: ChatWindowProps) {
               <span className="text-xs font-semibold text-gray-600">
                 {message.role === "user" ? "You" : "Claude"}
               </span>
-              <p>{message.content_text}</p>
+              {message.structured_output ? (
+                <EngineeringGuidanceView
+                  data={message.structured_output as unknown as EngineeringGuidance}
+                  rawText={message.content_text}
+                />
+              ) : (
+                <p>{message.content_text}</p>
+              )}
             </div>
           ))
         )}

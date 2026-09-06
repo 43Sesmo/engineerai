@@ -1,0 +1,47 @@
+{
+  "input": "I need a shaft to transmit 5 kW at 300 rpm.",
+  "provider": "anthropic",
+  "conformed": true,
+  "raw_text": "{\n  \"clarifying_questions\": [\n    \"What is the expected duty cycle (continuous vs. intermittent) and any shock/impact loading?\",\n    \"Is there a preferred keyway, spline, or coupling type at the shaft ends?\",\n    \"What is the expected shaft length and bearing support span (for deflection/bending checks)?\",\n    \"Are there any radial or axial loads from gears, pulleys, or sprockets mounted on the shaft?\",\n    \"What is the operating environment (temperature, corrosion exposure, lubrication)?\",\n    \"Is there a target fatigue life or safety factor required by the application standard?\"\n  ],\n  \"engineering_reasoning\": \"Torque was calculated from the given power and speed using T = P / omega. A solid circular shaft was sized against an allowable shear stress for a common medium-carbon steel, applying a standard service factor to account for typical torsional and minor bending loads in a general-purpose drive. This is a preliminary torsion-only sizing; actual diameter may need to increase once bending loads from mounted components (gears, pulleys, sprockets) and fatigue considerations are included.\",\n  \"preliminary_calculations\": {\n    \"power_kw\": 5,\n    \"speed_rpm\": 300,\n    \"angular_velocity_rad_s\": 31.42,\n    \"torque_nm\": 159.15,\n    \"shaft_diameter_mm\": 25,\n    \"material_grade\": \"AISI 1045\",\n    \"allowable_shear_stress_mpa\": 42,\n    \"service_factor\": 1.5,\n    \"design_torque_nm\": 238.7\n  },\n  \"material_suggestions\": [\n    \"AISI 1045 medium-carbon steel (cost-effective, good machinability)\",\n    \"AISI 4140 alloy steel (higher strength if duty cycle proves severe or shock loads present)\",\n    \"AISI 304/316 stainless steel (if corrosion resistance is required)\"\n  ],\n  \"manufacturing_suggestions\": [\n    \"Turn from round bar stock on a lathe\",\n    \"Add a keyway via broaching or end milling for coupling/pulley attachment\",\n    \"Grind shaft journals at bearing seats for tight tolerance and surface finish\",\n    \"Consider induction hardening at bearing/seal contact areas for wear resistance\"\n  ],\n  \"recommended_next_steps\": [\n    \"Confirm duty cycle, shock loading, and required fatigue/safety factor\",\n    \"Determine shaft length, bearing locations, and any overhung loads\",\n    \"Select a specific bearing and coupling to finalize shaft-end geometry\",\n    \"Perform a combined bending-torsion fatigue check (e.g., ASME shaft design code) once loads are known\",\n    \"Check deflection and critical speed if shaft length or overhung loads are significant\"\n  ]\n}",
+  "structured_output": {
+    "clarifying_questions": [
+      "What is the expected duty cycle (continuous vs. intermittent) and any shock/impact loading?",
+      "Is there a preferred keyway, spline, or coupling type at the shaft ends?",
+      "What is the expected shaft length and bearing support span (for deflection/bending checks)?",
+      "Are there any radial or axial loads from gears, pulleys, or sprockets mounted on the shaft?",
+      "What is the operating environment (temperature, corrosion exposure, lubrication)?",
+      "Is there a target fatigue life or safety factor required by the application standard?"
+    ],
+    "engineering_reasoning": "Torque was calculated from the given power and speed using T = P / omega. A solid circular shaft was sized against an allowable shear stress for a common medium-carbon steel, applying a standard service factor to account for typical torsional and minor bending loads in a general-purpose drive. This is a preliminary torsion-only sizing; actual diameter may need to increase once bending loads from mounted components (gears, pulleys, sprockets) and fatigue considerations are included.",
+    "preliminary_calculations": {
+      "power_kw": 5,
+      "speed_rpm": 300,
+      "angular_velocity_rad_s": 31.42,
+      "torque_nm": 159.15,
+      "shaft_diameter_mm": 25,
+      "material_grade": "AISI 1045",
+      "allowable_shear_stress_mpa": 42,
+      "service_factor": 1.5,
+      "design_torque_nm": 238.7
+    },
+    "material_suggestions": [
+      "AISI 1045 medium-carbon steel (cost-effective, good machinability)",
+      "AISI 4140 alloy steel (higher strength if duty cycle proves severe or shock loads present)",
+      "AISI 304/316 stainless steel (if corrosion resistance is required)"
+    ],
+    "manufacturing_suggestions": [
+      "Turn from round bar stock on a lathe",
+      "Add a keyway via broaching or end milling for coupling/pulley attachment",
+      "Grind shaft journals at bearing seats for tight tolerance and surface finish",
+      "Consider induction hardening at bearing/seal contact areas for wear resistance"
+    ],
+    "recommended_next_steps": [
+      "Confirm duty cycle, shock loading, and required fatigue/safety factor",
+      "Determine shaft length, bearing locations, and any overhung loads",
+      "Select a specific bearing and coupling to finalize shaft-end geometry",
+      "Perform a combined bending-torsion fatigue check (e.g., ASME shaft design code) once loads are known",
+      "Check deflection and critical speed if shaft length or overhung loads are significant"
+    ]
+  },
+  "error": null
+}

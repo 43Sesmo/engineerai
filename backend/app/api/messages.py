@@ -16,17 +16,26 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import field_validator
 from sqlmodel import Session, SQLModel, select
 
-from app.ai.client import AIProviderError, send_prompt
+from app.ai.client import AIProviderError
 from app.db.models import Conversation, Message
 from app.db.session import get_session
+from app.reasoning.engine import run_reasoning
 
 router = APIRouter(prefix="/api")
 
 
 class MessageCreate(SQLModel):
     content: str
+
+    @field_validator("content")
+    @classmethod
+    def content_must_not_be_blank(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("content must not be empty or whitespace-only.")
+        return value
 
 
 class MessageRead(SQLModel):
@@ -60,7 +69,7 @@ def create_message(
     _get_conversation_or_404(conversation_id, session)
 
     # Store the user's message first and commit immediately — preserved
-    # regardless of whether the Claude call below succeeds.
+    # regardless of whether the reasoning call below succeeds.
     user_message = Message(
         conversation_id=conversation_id, role="user", content_text=payload.content
     )
@@ -69,14 +78,21 @@ def create_message(
     session.refresh(user_message)
 
     try:
-        reply_text = send_prompt(payload.content)
+        result = run_reasoning(payload.content)
     except AIProviderError as exc:
         raise HTTPException(
-            status_code=502, detail=f"Claude API call failed: {exc}"
+            status_code=502, detail=f"Reasoning engine call failed: {exc}"
         ) from exc
 
+    structured_dict = (
+        result.structured.model_dump() if result.structured is not None else None
+    )
+
     assistant_message = Message(
-        conversation_id=conversation_id, role="assistant", content_text=reply_text
+        conversation_id=conversation_id,
+        role="assistant",
+        content_text=result.raw_text,
+        structured_output=structured_dict,
     )
     session.add(assistant_message)
     session.commit()

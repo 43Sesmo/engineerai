@@ -1,0 +1,49 @@
+{
+  "input": "I need a bracket for a machine.",
+  "provider": "anthropic",
+  "conformed": true,
+  "raw_text": "{\n  \"clarifying_questions\": [\n    \"What load(s) must the bracket support (magnitude, direction, static or dynamic)?\",\n    \"What are the mounting constraints (existing bolt pattern, available space envelope)?\",\n    \"What is the operating environment (temperature, moisture, chemical exposure, vibration)?\",\n    \"Is there a preferred material or manufacturing process due to cost or volume (one-off vs. mass production)?\",\n    \"What is the required safety factor or applicable design standard?\",\n    \"What are the mounting interfaces on both ends (bolted, welded, pinned)?\",\n    \"Is weight a critical constraint (e.g., for a moving assembly)?\",\n    \"What is the expected service life and duty cycle?\"\n  ],\n  \"engineering_reasoning\": \"A bracket design cannot be finalized without knowing the load case, geometry constraints, and environment, since these drive material selection, cross-section, and manufacturing method. In the absence of specifics, a generic preliminary approach is to treat the bracket as a cantilevered plate or L-shaped structural member subjected to a combined bending and shear load, sized using a standard safety factor against yield stress of a common structural material. This provides a placeholder baseline that should be revised once actual load and geometry data are provided.\",\n  \"preliminary_calculations\": {\n    \"assumed_load_n\": 500,\n    \"assumed_cantilever_length_mm\": 100,\n    \"assumed_bending_moment_nm\": 50,\n    \"material_yield_strength_mpa\": 250,\n    \"assumed_safety_factor\": 3,\n    \"allowable_stress_mpa\": 83.3,\n    \"estimated_section_modulus_mm3\": 600,\n    \"estimated_thickness_mm\": 6,\n    \"estimated_width_mm\": 40\n  },\n  \"material_suggestions\": [\n    \"ASTM A36 structural steel (general purpose, weldable)\",\n    \"6061-T6 aluminum (lightweight alternative)\",\n    \"AISI 304 stainless steel (corrosive or hygienic environments)\"\n  ],\n  \"manufacturing_suggestions\": [\n    \"Laser or waterjet cutting from plate stock followed by press-brake bending\",\n    \"CNC milling for high-precision or complex geometry brackets\",\n    \"Welding fabrication for larger or multi-piece brackets\",\n    \"Casting or die casting if produced in high volumes\"\n  ],\n  \"recommended_next_steps\": [\n    \"Define the exact load case (magnitude, direction, dynamic factors) acting on the bracket\",\n    \"Obtain or create a CAD model of the mating components to define mounting geometry\",\n    \"Determine environmental and regulatory requirements (corrosion, temperature, standards)\",\n    \"Perform FEA or hand calculations once load and geometry are confirmed\",\n    \"Select final material and manufacturing process based on production volume and cost target\"\n  ]\n}",
+  "structured_output": {
+    "clarifying_questions": [
+      "What load(s) must the bracket support (magnitude, direction, static or dynamic)?",
+      "What are the mounting constraints (existing bolt pattern, available space envelope)?",
+      "What is the operating environment (temperature, moisture, chemical exposure, vibration)?",
+      "Is there a preferred material or manufacturing process due to cost or volume (one-off vs. mass production)?",
+      "What is the required safety factor or applicable design standard?",
+      "What are the mounting interfaces on both ends (bolted, welded, pinned)?",
+      "Is weight a critical constraint (e.g., for a moving assembly)?",
+      "What is the expected service life and duty cycle?"
+    ],
+    "engineering_reasoning": "A bracket design cannot be finalized without knowing the load case, geometry constraints, and environment, since these drive material selection, cross-section, and manufacturing method. In the absence of specifics, a generic preliminary approach is to treat the bracket as a cantilevered plate or L-shaped structural member subjected to a combined bending and shear load, sized using a standard safety factor against yield stress of a common structural material. This provides a placeholder baseline that should be revised once actual load and geometry data are provided.",
+    "preliminary_calculations": {
+      "assumed_load_n": 500,
+      "assumed_cantilever_length_mm": 100,
+      "assumed_bending_moment_nm": 50,
+      "material_yield_strength_mpa": 250,
+      "assumed_safety_factor": 3,
+      "allowable_stress_mpa": 83.3,
+      "estimated_section_modulus_mm3": 600,
+      "estimated_thickness_mm": 6,
+      "estimated_width_mm": 40
+    },
+    "material_suggestions": [
+      "ASTM A36 structural steel (general purpose, weldable)",
+      "6061-T6 aluminum (lightweight alternative)",
+      "AISI 304 stainless steel (corrosive or hygienic environments)"
+    ],
+    "manufacturing_suggestions": [
+      "Laser or waterjet cutting from plate stock followed by press-brake bending",
+      "CNC milling for high-precision or complex geometry brackets",
+      "Welding fabrication for larger or multi-piece brackets",
+      "Casting or die casting if produced in high volumes"
+    ],
+    "recommended_next_steps": [
+      "Define the exact load case (magnitude, direction, dynamic factors) acting on the bracket",
+      "Obtain or create a CAD model of the mating components to define mounting geometry",
+      "Determine environmental and regulatory requirements (corrosion, temperature, standards)",
+      "Perform FEA or hand calculations once load and geometry are confirmed",
+      "Select final material and manufacturing process based on production volume and cost target"
+    ]
+  },
+  "error": null
+}

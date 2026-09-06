@@ -1,0 +1,8 @@
+{
+  "input": "I need a shaft to transmit 5 kW at 300 rpm.",
+  "provider": "openai",
+  "conformed": false,
+  "raw_text": null,
+  "structured_output": null,
+  "error": "OpenAI API returned an error: Error code: 401 - {'error': {'message': 'Incorrect API key provided: sk-proj-*******************************************************************************************************************Tc4t. You can find your API key at https://platform.openai.com/account/api-keys.', 'type': 'invalid_request_error', 'code': 'invalid_api_key', 'param': None}, 'status': 401}"
+}
