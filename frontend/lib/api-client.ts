@@ -104,6 +104,10 @@ function getConversation(conversationId: number): Promise<Conversation> {
   return request<Conversation>(`/api/conversations/${conversationId}`);
 }
 
+function listConversations(projectId: number): Promise<Conversation[]> {
+  return request<Conversation[]>(`/api/projects/${projectId}/conversations`);
+}
+
 function createMessage(
   conversationId: number,
   input: MessageCreateInput
@@ -123,6 +127,7 @@ export const apiClient = {
   createProject,
   createConversation,
   getConversation,
+  listConversations,
   createMessage,
   listMessages,
 };

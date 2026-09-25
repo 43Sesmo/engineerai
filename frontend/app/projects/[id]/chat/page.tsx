@@ -1,6 +1,6 @@
-import ChatWindow from "../../../../components/ChatWindow";
+import ConversationList from "../../../../components/ConversationList";
 
-export default async function ProjectChatPage({
+export default async function ProjectConversationsPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -10,7 +10,7 @@ export default async function ProjectChatPage({
 
   return (
     <main className="flex min-h-screen flex-col p-8">
-      <ChatWindow projectId={projectId} />
+      <ConversationList projectId={projectId} />
     </main>
   );
 }

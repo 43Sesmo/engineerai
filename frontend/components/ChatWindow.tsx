@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
-import { apiClient, Project, Message } from "../lib/api-client";
+import { apiClient, Conversation, Message } from "../lib/api-client";
 import EngineeringGuidanceView, { EngineeringGuidance } from "./EngineeringGuidanceView";
 
 interface ChatWindowProps {
-  projectId: number;
+  conversationId: number;
 }
 
-export default function ChatWindow({ projectId }: ChatWindowProps) {
-  const [project, setProject] = useState<Project | null>(null);
-  const [conversationId, setConversationId] = useState<number | null>(null);
+export default function ChatWindow({ conversationId }: ChatWindowProps) {
+  const [conversation, setConversation] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [setupError, setSetupError] = useState<string | null>(null);
@@ -19,32 +19,33 @@ export default function ChatWindow({ projectId }: ChatWindowProps) {
 
   useEffect(() => {
     let cancelled = false;
+    setLoading(true);
+    setSetupError(null);
 
     async function setup() {
       try {
-        // Client-side workaround for the missing GET /api/projects/{id}
-        // (approved): reuse listProjects() and find the match by id.
-        // Falls back to a numeric label if not found, rather than
-        // treating a miss as fatal.
-        const projects = await apiClient.listProjects();
-        if (!cancelled) {
-          const found = projects.find((p) => p.id === projectId) ?? null;
-          setProject(found);
-        }
-
-        const conversation = await apiClient.createConversation(projectId, {});
+        // Sprint 4: ChatWindow no longer creates a conversation — it's
+        // keyed on an existing conversationId (from the route) and only
+        // loads that conversation's own metadata and message history.
+        const loadedConversation = await apiClient.getConversation(
+          conversationId
+        );
         if (cancelled) return;
-        setConversationId(conversation.id);
+        setConversation(loadedConversation);
 
-        const existingMessages = await apiClient.listMessages(conversation.id);
+        const existingMessages = await apiClient.listMessages(conversationId);
         if (!cancelled) {
           setMessages(existingMessages);
         }
       } catch (err) {
         if (!cancelled) {
           setSetupError(
-            err instanceof Error ? err.message : "Failed to start conversation."
+            err instanceof Error ? err.message : "Failed to load conversation."
           );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
         }
       }
     }
@@ -53,11 +54,11 @@ export default function ChatWindow({ projectId }: ChatWindowProps) {
     return () => {
       cancelled = true;
     };
-  }, [projectId]);
+  }, [conversationId]);
 
   async function handleSend(e: FormEvent) {
     e.preventDefault();
-    if (!input.trim() || conversationId === null) return;
+    if (!input.trim()) return;
 
     setSending(true);
     setSendError(null);
@@ -94,14 +95,14 @@ export default function ChatWindow({ projectId }: ChatWindowProps) {
     return <p className="text-red-600">Error: {setupError}</p>;
   }
 
-  if (conversationId === null) {
-    return <p>Starting conversation...</p>;
+  if (loading) {
+    return <p>Loading conversation...</p>;
   }
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col gap-4">
       <h1 className="text-2xl font-bold">
-        {project ? project.title : `Project #${projectId}`}
+        {conversation?.title ?? `Conversation #${conversationId}`}
       </h1>
 
       <div className="flex flex-col gap-2 border rounded p-4 min-h-[200px]">

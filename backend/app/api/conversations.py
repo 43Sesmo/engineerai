@@ -11,10 +11,10 @@ import, no reuse or duplication of Task 9's default-user helper.
 """
 
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, SQLModel
+from sqlmodel import Session, SQLModel, select
 
 from app.db.models import Conversation, Project
 from app.db.session import get_session
@@ -58,6 +58,27 @@ def create_conversation(
     session.commit()
     session.refresh(conversation)
     return conversation
+
+
+@router.get(
+    "/projects/{project_id}/conversations",
+    response_model=List[ConversationRead],
+)
+def list_conversations(
+    project_id: int, session: Session = Depends(get_session)
+) -> List[Conversation]:
+    """
+    List conversations for a project, most-recent-first (Sprint 4 §3.3).
+    Added to support the conversation list view — the create/get-by-id
+    routes above already existed; this was the missing piece that made
+    reopening or browsing past conversations impossible.
+    """
+    _get_project_or_404(project_id, session)
+    return session.exec(
+        select(Conversation)
+        .where(Conversation.project_id == project_id)
+        .order_by(Conversation.created_at.desc())
+    ).all()
 
 
 @router.get("/conversations/{conversation_id}", response_model=ConversationRead)
