@@ -8,14 +8,17 @@ middleware — the one necessary exception to "frontend tasks don't touch
 the backend," required because browsers block cross-origin requests
 (localhost:3000 calling localhost:8000 is cross-origin) without it.
 FastAPI's automatic /docs and /openapi.json exist by default; that's
-built-in framework behavior, not new scope added by any task.
+built-in framework behavior, not new scope added by any task. Sprint 5
+added the Knowledge Vault MVP (POST/GET /api/knowledge, GET
+/api/knowledge/{id}) — backend-only, no CORS change needed since it's
+covered by the existing GET/POST allowance.
 """
 
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import conversations, health, messages, projects
+from app.api import conversations, health, knowledge, messages, projects
 from app.core.config import settings
 
 app = FastAPI(
@@ -41,6 +44,7 @@ app.include_router(health.router)
 app.include_router(projects.router)
 app.include_router(conversations.router)
 app.include_router(messages.router)
+app.include_router(knowledge.router)
 
 
 if __name__ == "__main__":

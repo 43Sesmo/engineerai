@@ -11,3 +11,16 @@ from app.db.models.project import Project
 from app.db.models.user import User
 
 __all__ = ["User", "Project", "Conversation", "Message"]
+from app.db.models.conversation import Conversation
+from app.db.models.knowledge_entry import KnowledgeEntry
+from app.db.models.message import Message
+from app.db.models.project import Project
+from app.db.models.user import User
+
+__all__ = [
+    "User",
+    "Project",
+    "Conversation",
+    "Message",
+    "KnowledgeEntry",
+]
