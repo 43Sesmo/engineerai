@@ -7,6 +7,9 @@ export default function Home() {
       <Link href="/projects" className="text-blue-600 underline">
         View Projects
       </Link>
+      <Link href="/knowledge" className="text-blue-600 underline">
+        View Knowledge Vault
+      </Link>
     </main>
   );
 }

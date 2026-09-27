@@ -52,6 +52,43 @@ export interface MessageCreateInput {
   content: string;
 }
 
+// Sprint 5 backend, consumed for the first time by a UI in Sprint 6.
+// `content` stays generic here on purpose — same convention
+// EngineeringGuidanceView.tsx documents for Message.structured_output:
+// the client type only needs to know it can hold freeform JSON: any
+// per-entry_type interpretation belongs in whichever component displays
+// it, not here.
+export interface KnowledgeEntry {
+  id: number;
+  user_id: number;
+  project_id: number | null;
+  source_conversation_id: number | null;
+  source_message_id: number | null;
+  entry_type: string;
+  title: string;
+  summary: string;
+  content: Record<string, unknown> | null;
+  tags: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KnowledgeEntryCreateInput {
+  project_id?: number | null;
+  source_conversation_id?: number | null;
+  source_message_id?: number | null;
+  entry_type: string;
+  title: string;
+  summary: string;
+  content?: Record<string, unknown> | null;
+  tags?: string[] | null;
+}
+
+export interface KnowledgeEntryFilters {
+  entry_type?: string;
+  project_id?: number;
+}
+
 // --- Shared request helper -------------------------------------------
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
@@ -122,6 +159,35 @@ function listMessages(conversationId: number): Promise<Message[]> {
   return request<Message[]>(`/api/conversations/${conversationId}/messages`);
 }
 
+// --- Knowledge Vault endpoint functions (Sprint 5's backend) -------------
+
+function listKnowledgeEntries(
+  filters?: KnowledgeEntryFilters
+): Promise<KnowledgeEntry[]> {
+  const params = new URLSearchParams();
+  if (filters?.entry_type) params.set("entry_type", filters.entry_type);
+  if (filters?.project_id !== undefined) {
+    params.set("project_id", String(filters.project_id));
+  }
+  const query = params.toString();
+  return request<KnowledgeEntry[]>(
+    `/api/knowledge${query ? `?${query}` : ""}`
+  );
+}
+
+function createKnowledgeEntry(
+  input: KnowledgeEntryCreateInput
+): Promise<KnowledgeEntry> {
+  return request<KnowledgeEntry>("/api/knowledge", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+function getKnowledgeEntry(entryId: number): Promise<KnowledgeEntry> {
+  return request<KnowledgeEntry>(`/api/knowledge/${entryId}`);
+}
+
 export const apiClient = {
   listProjects,
   createProject,
@@ -130,6 +196,9 @@ export const apiClient = {
   listConversations,
   createMessage,
   listMessages,
+  listKnowledgeEntries,
+  createKnowledgeEntry,
+  getKnowledgeEntry,
 };
 
 // --- Dev-only console access ---------------------------------------------
