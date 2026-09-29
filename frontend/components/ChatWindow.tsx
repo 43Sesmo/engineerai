@@ -3,6 +3,7 @@
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { apiClient, Conversation, Message } from "../lib/api-client";
 import EngineeringGuidanceView, { EngineeringGuidance } from "./EngineeringGuidanceView";
+import SaveToVaultButton from "./SaveToVaultButton";
 
 interface ChatWindowProps {
   conversationId: number;
@@ -110,7 +111,7 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
           <p className="text-gray-500">No messages yet.</p>
         ) : (
           messages.map((message) => (
-            <div key={message.id} className="flex flex-col">
+            <div key={message.id} className="flex flex-col gap-1">
               <span className="text-xs font-semibold text-gray-600">
                 {message.role === "user" ? "You" : "Claude"}
               </span>
@@ -122,6 +123,11 @@ export default function ChatWindow({ conversationId }: ChatWindowProps) {
               ) : (
                 <p>{message.content_text}</p>
               )}
+              <SaveToVaultButton
+                message={message}
+                conversationId={conversationId}
+                projectId={conversation?.project_id ?? null}
+              />
             </div>
           ))
         )}
