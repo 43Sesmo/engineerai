@@ -28,7 +28,11 @@ from app.reasoning.prompts.engineering_guidance_prompt import build_prompt
 from app.reasoning.schemas import EngineeringGuidance
 
 
-def generate_guidance(user_input: str, model: str | None = None) -> str:
+def generate_guidance(
+    user_input: str,
+    model: str | None = None,
+    retrieved_context: str | None = None,
+) -> str:
     """
     Send a user's raw engineering idea through the reasoning prompt and
     return the AI's raw text response, unparsed.
@@ -41,7 +45,7 @@ def generate_guidance(user_input: str, model: str | None = None) -> str:
     if not user_input.strip():
         raise ValueError("user_input must not be empty or whitespace-only.")
 
-    prompt = build_prompt(user_input)
+    prompt = build_prompt(user_input, retrieved_context=retrieved_context)
     return send_prompt(prompt, model=model)
 
 
@@ -58,7 +62,11 @@ class ReasoningResult:
     structured: Optional[EngineeringGuidance]
 
 
-def run_reasoning(user_input: str, model: str | None = None) -> ReasoningResult:
+def run_reasoning(
+    user_input: str,
+    model: str | None = None,
+    retrieved_context: str | None = None,
+) -> ReasoningResult:
     """
     Run the full reasoning path: generate a raw response, then attempt
     to parse it into structured guidance. Always returns both values
@@ -68,6 +76,8 @@ def run_reasoning(user_input: str, model: str | None = None) -> ReasoningResult:
     parsing failure never raises anything at all, it simply results in
     structured=None.
     """
-    raw_text = generate_guidance(user_input, model=model)
+    raw_text = generate_guidance(
+        user_input, model=model, retrieved_context=retrieved_context
+    )
     structured = try_parse_guidance(raw_text)
     return ReasoningResult(raw_text=raw_text, structured=structured)

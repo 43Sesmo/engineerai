@@ -34,7 +34,7 @@ def send_prompt(prompt: str, model: str | None = None) -> str:
     try:
         response = client.messages.create(
             model=resolved_model,
-            max_tokens=1024,
+            max_tokens=4096,
             messages=[{"role": "user", "content": prompt}],
         )
     except anthropic.APITimeoutError as exc:

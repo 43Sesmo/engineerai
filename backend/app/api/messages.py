@@ -1,6 +1,6 @@
 """
 Messages API — the minimal round trip: post a message, store it, send it
-to Claude, store the reply, return both.
+to Claude, store the reply, return both. Sprint 8: also fetches project Vault context via app.reasoning.retrieval and passes it through as an opaque string; formatting still lives outside this module.
 
 No prompt engineering, no structured-output parsing — payload.content goes
 to Claude exactly as typed, and the reply is stored exactly as returned.
@@ -23,6 +23,7 @@ from app.ai.client import AIProviderError
 from app.db.models import Conversation, Message
 from app.db.session import get_session
 from app.reasoning.engine import run_reasoning
+from app.reasoning.retrieval import build_retrieved_context
 
 router = APIRouter(prefix="/api")
 
@@ -66,7 +67,8 @@ def create_message(
     payload: MessageCreate,
     session: Session = Depends(get_session),
 ) -> List[Message]:
-    _get_conversation_or_404(conversation_id, session)
+    conversation = _get_conversation_or_404(conversation_id, session)
+    project_id = conversation.project_id
 
     # Store the user's message first and commit immediately — preserved
     # regardless of whether the reasoning call below succeeds.
@@ -77,8 +79,10 @@ def create_message(
     session.commit()
     session.refresh(user_message)
 
+    retrieved_context = build_retrieved_context(session, project_id)
+
     try:
-        result = run_reasoning(payload.content)
+        result = run_reasoning(payload.content, retrieved_context=retrieved_context)
     except AIProviderError as exc:
         raise HTTPException(
             status_code=502, detail=f"Reasoning engine call failed: {exc}"
