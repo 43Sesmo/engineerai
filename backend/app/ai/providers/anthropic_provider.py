@@ -7,10 +7,14 @@ shared, generic AIProviderError, so callers never need to know which
 provider is active.
 """
 
+import logging
+
 import anthropic
 
 from app.ai.errors import AIProviderError
 from app.core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def send_prompt(prompt: str, model: str | None = None) -> str:
@@ -41,6 +45,16 @@ def send_prompt(prompt: str, model: str | None = None) -> str:
         raise AIProviderError(f"Anthropic API request timed out: {exc}") from exc
     except anthropic.APIError as exc:
         raise AIProviderError(f"Anthropic API returned an error: {exc}") from exc
+
+    # Sprint 9: truncation is otherwise invisible downstream — a cut-off
+    # response is stored as a normal reply with structured=None. Log only;
+    # the return value and signature are unchanged.
+    if getattr(response, "stop_reason", None) == "max_tokens":
+        logger.warning(
+            "Anthropic response truncated at max_tokens (model=%s, output_tokens=%s).",
+            resolved_model,
+            getattr(getattr(response, "usage", None), "output_tokens", "?"),
+        )
 
     text_parts = [block.text for block in response.content if block.type == "text"]
     return "".join(text_parts)
